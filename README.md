@@ -1,5 +1,5 @@
 # scRNAseq_pipelines
-These scripts were written to run key scRNAseq analysis steps as "blocks" that can be called from a master script. 
+These scripts were written in 2018 to run key scRNAseq analysis steps as "blocks" that can be called from a master script, based mostly on Seurat Version 3.
 This facilitates the analysis of scRNAseq datasets for researcher with little coding experience. 
 In the script 0_Master_script, reserachers can call different functions and specify inputs such as path to data or parameters. 
 The functions' output differ depending on the function and can include csv files or other outputs. 
