@@ -1,5 +1,4 @@
 seurat_analysis <- function(TPM_file=TPM_sub,
-                            # TPM_file="TPM.txt",
                             sample_file= NULL,
                             group_col="GroupID",
                             base_name="GC", 
@@ -24,7 +23,6 @@ seurat_analysis <- function(TPM_file=TPM_sub,
   library(Seurat)
   library(dplyr)
   library(Matrix)
-  # pbmc.data <- read.table(TPM_file,sep="\t",header=T,row.names=1,check.names = F)
   pbmc.data <- TPM_file
   
   if(!is.null(sample_file)){
@@ -314,53 +312,4 @@ seurat_analysis <- function(TPM_file=TPM_sub,
   }
   ####################
 }
-
-
-JackStraw_pval <- function (object, PCs = 1:5, score.thresh = 1e-05) {
-  library(reshape2)
-  
-  pAll <- GetDimReduction(object, reduction.type = "pca", slot = "jackstraw")@emperical.p.value
-  pAll <- pAll[, PCs, drop = FALSE]
-  pAll <- as.data.frame(pAll)
-  pAll$Contig <- rownames(x = pAll)
-  pAll.l <- melt(data = pAll, id.vars = "Contig")
-  colnames(x = pAll.l) <- c("Contig", "PC", "Value")
-  qq.df <- NULL
-  score.df <- NULL
-  for (i in PCs) {
-    q <- qqplot(x = pAll[, i], y = runif(n = 1000), plot.it = FALSE)
-    pc.score <- suppressWarnings(prop.test(x = c(length(x = which(x = pAll[, 
-                                                                           i] <= score.thresh)), floor(x = nrow(x = pAll) * 
-                                                                                                         score.thresh)), n = c(nrow(pAll), nrow(pAll)))$p.val)
-    if (length(x = which(x = pAll[, i] <= score.thresh)) == 
-        0) {
-      pc.score <- 1
-    }
-    if (is.null(x = score.df)) {
-      score.df <- data.frame(PC = paste0("PC", i), Score = pc.score)
-    }
-    else {
-      score.df <- rbind(score.df, data.frame(PC = paste0("PC", 
-                                                         i), Score = pc.score))
-    }
-    if (is.null(x = qq.df)) {
-      qq.df <- data.frame(x = q$x, y = q$y, PC = paste0("PC", 
-                                                        i))
-    }
-    else {
-      qq.df <- rbind(qq.df, data.frame(x = q$x, y = q$y, 
-                                       PC = paste0("PC", i)))
-    }
-  }
-  return(score.df)
-}
-
-#seurat_analysis(TPM_file="TPM.txt",sample_file="sample.txt",group_col="PatientID",base_name="GC_PatientID", resolution = 0.85)
-#seurat_analysis(TPM_file="TPM.txt",sample_file="sample.txt",group_col="Phenotype",base_name="GC_Phenotype", resolution = 0.85)
-#seurat_analysis(TPM_file="TPM.txt",sample_file="sample.txt",group_col="Site",base_name="GC_Site", resolution = 0.85)
-#seurat_analysis(TPM_file="TPM.txt",sample_file="sample.txt",group_col="Batch",base_name="GC_Batch", resolution = 0.85)
-
-
-#seurat_analysis(TPM_file="TPM_geneSymbol_mean_selectedMarker.txt",sample_file=NULL,group_col=NULL,base_name="Bat_Bcell_selectedMarker", resolution = 0.85)
-
 
